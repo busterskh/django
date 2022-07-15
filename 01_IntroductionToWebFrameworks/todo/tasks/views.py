@@ -7,8 +7,8 @@ class ToDoView(View):
 
     def get(self, request, *args, **kwargs):
         return HttpResponse('<ul>'
-                            '<li>Установить python</li>'
-                            '<li>Установить django</li>'
-                            '<li>Запустить сервер</li>'
-                            '<li>Порадоваться результату</li>'
+                            '<li>Установить python - сделано!</li>'
+                            '<li>Установить django- сделано!</li>'
+                            '<li>Запустить сервер- сделано!</li>'
+                            '<li>Порадоваться результату- сделано!</li>'
                             '</ul>')
