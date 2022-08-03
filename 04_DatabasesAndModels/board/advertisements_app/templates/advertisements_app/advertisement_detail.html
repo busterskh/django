@@ -1,0 +1,30 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ object.title }}</title>
+</head>
+<body>
+    <h1>
+        {{ object.title }}
+    </h1>
+
+    <h3>
+        Цена: {{ object.price}}$
+    </h3>
+
+    <h3>
+        Описание: {{ object.description }}
+    </h3>
+    <ul>
+        Рубрика: {{ object.category_status}}<br>
+        Тип объявления: {{ object.type}}
+    </ul>
+    <ul>
+        Контактная информация:<br>
+        {{ object.user_status.phone }}<br>
+        {{ object.user_status.email }}<br>
+        {{ object.user_status.name }}<br>
+    </ul>
+    <small> Количество просмотров: {{ object.views }}</small>
+</body>
+</html>

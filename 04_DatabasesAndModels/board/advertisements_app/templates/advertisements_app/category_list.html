@@ -1,0 +1,20 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+</head>
+<body>
+    <h1>Бесплатные объявления</h1>
+    <ul>
+    {% if category_list %}
+        {% for category in category_list %}
+        <li>
+            <a href="/category/{{ category.id }}">{{ category.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>Нет ни одной категории</p>
+    {% endif %}
+</body>
+</html>

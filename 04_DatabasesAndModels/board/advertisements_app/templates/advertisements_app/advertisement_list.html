@@ -1,0 +1,20 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+</head>
+<body>
+    <h1>Бесплатные объявления</h1>
+    <ul>
+    {% if advertisement_list %}
+        {% for ad in advertisement_list %}
+        <li>
+            <a href="/advertisements/{{ ad.id }}">{{ ad.title }} | {{ ad.price }} | {{ ad.category_status }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>Объявлений нет</p>
+    {% endif %}
+</body>
+</html>

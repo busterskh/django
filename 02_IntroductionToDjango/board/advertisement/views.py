@@ -3,7 +3,7 @@ from django.http import HttpResponse
 
 
 def advertisement_list(request, *args, **kwargs):
-    return render(request, 'advertisement/advertisement_list.html', {})
+    return render(request, 'advertisement/adver.html', {})
 
 
 def python_basic(request, *args, **kwargs):
