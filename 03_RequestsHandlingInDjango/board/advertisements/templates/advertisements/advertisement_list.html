@@ -1,7 +1,15 @@
 <html>
-<ul>
-    <li>Мастер на час</li>
-    <li>Выведение из запоя</li>
-    <li>Услуги экскаватора-погрузчика, гидромолота, ямобура</li>
-</ul>
+    <ul>
+    {% for a in advertisements %}
+        <li>{{a}}</li>
+        {% endfor %}
+    </ul>
+    Хотите добавить обьявление? Оставьте заявку в поле ниже (имя, телефон)!
+    <form action="./" method="post">
+        <input type="text" name="username">
+        <input type="submit" value=«Отправить»>
+        {% csrf_token %}
+    </form>
+
+
 </html>

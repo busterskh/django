@@ -1,0 +1,29 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+</head>
+<body>
+    <form action="./" method="post">
+        <input type="text" name="username">
+        <input type="submit" value=«Поиск»>
+        {% csrf_token %}
+    </form>
+
+<h2>Категории</h2>
+<ul>
+    <li><p><a href="advertisements/">Обьявления</a></p></li>
+    <li><p><a href="contacts/">Контакты</a></p></li>
+    <li><p><a href="about/">О компании</a></p></li>
+    <br>
+</ul>
+
+<h2>Регионы</h2>
+<ul>
+    {% for city in regions %}
+        <li>{{city}}</li>
+        {% endfor %}
+</ul>
+
+</body>
+</html>
