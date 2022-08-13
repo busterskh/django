@@ -1,8 +1,9 @@
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from app_news.forms import *
 from app_news.models import *
-from django.views import generic, View
+from django.views import generic
+from django.views.generic.edit import UpdateView, CreateView
 
 
 class NewsListView(generic.ListView):
@@ -10,38 +11,16 @@ class NewsListView(generic.ListView):
     contexts_object_name = 'news_list'
 
 
-class NewsFormView(View):
-    def get(self, request):
-        news_form = NewsForm()
-
-        return render(request, 'app_news/create_news.html', context={'news_form': news_form})
-
-    def post(self, request):
-        news_form = NewsForm(request.POST)
-
-        if news_form.is_valid():
-
-            News.objects.create(**news_form.cleaned_data)
-            return HttpResponseRedirect('/all_news/')
-
-        return render(request, 'app_news/create_news.html', context={'news_form': news_form})
+class NewsCreateView(CreateView):
+    model = News
+    template_name = 'app_news/create_news.html'
+    fields = '__all__'
 
 
-class NewsEditFormView(View):
-
-    def get(self, request, news_id):
-        news = News.objects.get(id=news_id)
-        news_form = NewsForm(instance=news)
-        return render(request, 'app_news/edit.html', context={'news_form': news_form, 'news_id': news_id})
-
-    def post(self, request, news_id):
-        news = News.objects.get(id=news_id)
-        news_form = NewsForm(request.POST, instance=news)
-
-        if news_form.is_valid():
-            news.save()
-            return HttpResponseRedirect(f'/all_news/{news_id}')
-        return render(request, 'app_news/edit.html', context={'news_form': news_form, 'news_id': news_id})
+class NewsUpdateView(UpdateView):
+    model = News
+    template_name = 'app_news/edit.html'
+    fields = ['title', 'text', 'is_active', ]
 
 
 class NewsDetailView(generic.DetailView):

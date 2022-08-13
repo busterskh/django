@@ -8,11 +8,11 @@
     <ul>
     {% if news_list %}
         {% for news in news_list %}
-        <li>
+        <h3>
             <a href="/all_news/{{ news.id }}">
-                {{ news.title }} | {{ news.change_date }}
+                {{ news.title }} | <small>{{ news.change_date }}</small>
             </a>
-        </li>
+        </h3>
         {% endfor %}
     </ul>
     {% else %}

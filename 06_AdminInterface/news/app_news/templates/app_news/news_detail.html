@@ -3,6 +3,7 @@
     <title>{{ news_object.title }}</title>
 </head>
 <body>
+    <small><a href="/all_news/">На главную</a> </small>
     <h1>
         {{ news_object.title }}
     </h1>
@@ -11,18 +12,18 @@
       Дата последнего изменения: {{ news_object.change_date }}
     </small>
 
-    <h3>
+    <p>
         {{ news_object.text }}
-    </h3>
+    </p>
     <a href="edit/">
         <button type="button">Редактировать</button>
     </a>
 
-    <h2>
+    <h3>
       Коментарии
-    </h2>
+    </h3>
 
-    <h3>Создать комментарий</h3>
+    <h4>Создать комментарий</h4>
 
         <form
             method="post" action="">

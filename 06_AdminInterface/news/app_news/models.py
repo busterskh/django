@@ -1,5 +1,5 @@
-from django.contrib import admin
 from django.db import models
+from django.urls import reverse
 
 
 class News(models.Model):
@@ -15,6 +15,9 @@ class News(models.Model):
 
     def __str__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('news-detail', args=[str(self.id)])
 
 
 class Comment(models.Model):

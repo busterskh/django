@@ -4,11 +4,13 @@
     <title>Редактирование</title>
 </head>
 <body>
-  <form method="post" action="/all_news/{{ news_id }}/edit/">
-      {% csrf_token %}
-      {{ news_form.as_p }}
-      <button type="submit">Сохранить</button>
-  </form>
+    <small><a href="/all_news/">На главную</a> </small>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Сохранить</button>
+    </form>
 
 </body>
 </html>
