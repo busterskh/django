@@ -1,0 +1,83 @@
+<html>
+<head>
+    <title>{{ news_object.title }}</title>
+</head>
+<body>
+    {% if request.user.is_authenticated %}
+        <div align="right">Привет, {{ request.user.username }}!
+            <button>
+                <a href="/logout/">Выход</a>
+            </button>
+        </div>
+    {% else %}
+        <div align="right">Вы не авторизованы.
+            <button>
+                <a href="/login/">Вход</a>
+            </button>
+        </div>
+    {% endif %}
+
+    <small><a href="/all_news/">На главную</a> </small>
+    <h1>
+        {{ news_object.title }}
+    </h1>
+
+    <small>
+      Дата последнего изменения: {{ news_object.change_date }}
+    </small>
+
+    <p>
+        {{ news_object.text }}
+    </p>
+    <a href="edit/">
+        <button type="button">Редактировать</button>
+    </a>
+
+    <h3>
+      Коментарии
+    </h3>
+
+    <h4>Создать комментарий</h4>
+
+        <form
+            method="post" action="">
+            {% csrf_token %}
+            {{ comments_form.as_p }}
+            <button type="submit">Отправить</button>
+        </form>
+    <hr>
+
+    {% if comments_list %}
+        {% for comment in comments_list %}
+            {% if comment.user is None %}
+                <p>
+                    Пользователь: [аноним] {{ comment.user_name }}
+                </p>
+                <p>
+                    Сообщение: {{comment.comment_text}}
+                </p>
+                <small>
+                    Дата публикации: {{comment.create_comment_date}}
+                </small>
+                <hr>
+            {% else %}
+                <p>
+                Пользователь: {{ comment.user_name }}
+                </p>
+                <p>
+                    Сообщение: {{comment.comment_text}}
+                </p>
+                <small>
+                    Дата публикации: {{comment.create_comment_date}}
+                </small>
+                <hr>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+
+    <ul>
+        Комментариев нет.
+    </ul>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная</title>
+</head>
+<body>
+    <section>
+        {% if request.user.is_authenticated %}
+        <div align="right">Привет, {{ request.user.username }}!
+            <button>
+                <a href="/logout/">Выход</a>
+            </button>
+        </div>
+    {% else %}
+        <div align="right">Вы не авторизованы.
+            <button>
+                <a href="/login/">Вход</a>
+            </button>
+        </div>
+    {% endif %}
+    </section>
+
+    <section>
+        <h1>Новости</h1>
+        <ul>
+            {% if news_list %}
+                {% for news in news_list %}
+                <h3>
+                    <a href="/all_news/{{ news.id }}">
+                        {{ news.title }} | <small>{{ news.change_date }}</small>
+                    </a>
+                </h3>
+                {% endfor %}
+        </ul>
+        {% else %}
+            <p>Новоcтей нет</p>
+        {% endif %}
+    </section>
+<a href="/create_news/">
+    <button type="button">Добавить статью</button>
+</a>
+</body>
+</html>
