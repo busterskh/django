@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Доступ ограничен</title>
+</head>
+<body>
+    {% if not request.user.is_authenticated %}
+        <div align="center">Вы не авторизованы.
+            <button>
+                <a href="/login/">Вход</a>
+            </button>
+            <button>
+                <a href="/registration/">Регистрация</a>
+            </button>
+        </div>
+    {% else %}
+        <div align="center">Ваши права на создание новости не подтверждены модератором.
+            <button>
+                <a href="/all_news/">На главную</a>
+            </button>
+        </div>
+    {% endif %}
+</body>
+</html>

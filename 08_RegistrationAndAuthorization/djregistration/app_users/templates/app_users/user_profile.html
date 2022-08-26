@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ request.user.username }}</title>
+</head>
+<body>
+    <div>
+        {% if request.user.is_authenticated %}
+            <div align="right">Привет, {{ request.user.username }}!
+                <button>
+                    <a href="/logout/">Выход</a>
+                </button>
+            </div>
+        {% else %}
+            <div align="right">Вы не авторизованы.
+                <button>
+                    <a href="/login/">Вход</a>
+                </button>
+                <button>
+                    <a href="/registration/">Регистрация</a>
+                </button>
+            </div>
+        {% endif %}
+    </div>
+    <h3> Профиль пользователя {{ request.user.username }}</h3>
+    <div>
+        <p> Useraname: {{ request.user.username }} </p>
+        <p> Phone: {{ profile.phone }} </p>
+        <p> City: {{ profile.city }} </p>
+        <p> Verifications: {{ profile.is_verification }} </p>
+        <p> Published news: {{ profile.news_count }} </p>
+    </div>
+</body>
+</html>
