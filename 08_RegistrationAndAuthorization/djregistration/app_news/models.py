@@ -11,7 +11,7 @@ class News(models.Model):
     change_date = models.DateTimeField(auto_now=True, verbose_name='Дата последнего изменения')
     is_active = models.BooleanField(verbose_name='Активность', default=False)
     user = models.ForeignKey(User, default=None, null=True, on_delete=models.CASCADE)
-    tag = models.ManyToManyField('Tegs')
+    tag = models.ForeignKey('Tegs', on_delete=None, default=None, null=True)
 
     class Meta:
         db_table = 'News'
@@ -52,3 +52,4 @@ class Tegs(models.Model):
 
     def __str__(self):
         return self.name
+

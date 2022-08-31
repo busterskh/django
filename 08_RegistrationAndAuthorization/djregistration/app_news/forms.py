@@ -16,10 +16,3 @@ class CommentFormAuthenticate(forms.ModelForm):
         model = Comment
 
         exclude = ('news_id', 'user_name', 'user')
-
-
-class NewsForm(forms.ModelForm):
-
-    class Meta:
-        model = News
-        exclude = ('user', 'is_active', 'tag')

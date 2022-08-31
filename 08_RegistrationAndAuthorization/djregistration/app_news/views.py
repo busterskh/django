@@ -1,21 +1,29 @@
 from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from app_news.forms import *
 from app_news.models import *
 from django.views import generic, View
 from django.views.generic.edit import UpdateView
 from app_users.models import Profile
+from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 
 
 class NewsListView(generic.ListView):
     model = News
     contexts_object_name = 'news_list'
-    queryset = News.objects.filter(is_active=True)
+    template_name = 'app_news/news_list.html'
 
-    def get_ordering(self):
+    def get_queryset(self):
+        model = super(NewsListView, self).get_queryset()
         ordering = self.request.GET.get('orderby')
-        return ordering
+
+        ordering_by_teg = self.request.GET.get('tag')
+        if ordering_by_teg:
+            return News.objects.filter(tag=Tegs.objects.get(name=ordering_by_teg))
+        elif ordering:
+            return model.order_by(ordering)
+        return self.ordering
 
     def get_context_data(self, **kwargs):
         data = super(NewsListView, self).get_context_data(**kwargs)
@@ -23,32 +31,45 @@ class NewsListView(generic.ListView):
         return data
 
 
-class NewsCreateView(View):
+class NewsCreateView(PermissionRequiredMixin, generic.CreateView):
+    model = News
+    template_name = 'app_news/create_news.html'
+    fields = ('title', 'text', 'tag', )
+    permission_required = ('app_news.add_news', )
 
-    def get(self, request):
-        if not request.user.has_perm('app_news.add_news'):
-            raise PermissionDenied()
-        news_form = NewsForm()
-        return render(request, 'app_news/create_news.html', context={'news_form': news_form})
+    def handle_no_permission(self):
+        return render(self.request, 'app_news/create_news_access_restricted.html', {})
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
 
-        if not request.user.has_perm('app_news.add_news'):
-            raise PermissionDenied()
-        news_form = NewsForm(request.POST)
-
-        if news_form.is_valid():
-            News.objects.create(**news_form.cleaned_data, user=request.user)
-            profile = Profile.objects.get(user=request.user)
-            profile.news_count += 1
-            profile.save()
+        if form.is_valid():
+            News.objects.create(**form.cleaned_data, user=request.user)
+            try:
+                profile = Profile.objects.get(user=request.user)
+                profile.news_count += 1
+                profile.save()
+            except BaseException:
+                pass
             return HttpResponseRedirect('/all_news/')
 
 
-class NewsUpdateView(UpdateView):
+class NewsUpdateView(UserPassesTestMixin, UpdateView):
     model = News
     template_name = 'app_news/edit.html'
     fields = ['title', 'text', ]
+
+    def test_func(self):
+        if self.request.user.is_superuser:
+            return True
+        news = self.get_object()
+        return news.user == self.request.user
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return redirect('/login/')
+        else:
+            raise PermissionDenied()
 
 
 class NewsDetailView(generic.DetailView):
@@ -88,5 +109,3 @@ class MainPage(View):
 
     def get(self, request):
         return HttpResponseRedirect('all_news/')
-
-

@@ -9,7 +9,8 @@
         <h2>Создать новость</h2>
         <form method="post" action="/create_news/">
             {% csrf_token %}
-            {{ news_form.as_p }}
+            {{ form.as_p }}
+
         <button type="submit">Создать</button>
         </form>
 </body>

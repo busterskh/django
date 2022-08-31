@@ -25,20 +25,21 @@
     <form action="" method="get" id="sortNews">
         <div class="box sort pull-right">
             <span>Сортировка:</span>
-            <button value="Сортировка" class="dropdown-toggle" type="submit" data-toggle="dropdown" id="menu2">
-                <span class="dropdown-label">По умолчанию</span>
-            </button>
             <ul class="dropdown-menu" role="menu" aria-labelledby="menu2">
+                {% for teg in tegs %}
+                    <li><input type="submit" name="tag" value={{teg}} ></li>
+                {% endfor %}
                 <li><input type="submit" name="orderby" value="create_date" >Сначала старые</li>
                 <li><input type="submit" name="orderby" value="-create_date">Сначала новые</li>
-
             </ul>
         </div>
     </form>
     <section>
         <h1>Новости</h1>
         <ul>
-            {% if news_list %}
+            {% if news_list is None %}
+                <p>Новоcтей нет</p>
+            {% else %}
                 {% for news in news_list %}
                 <h3>
                     <a href="/all_news/{{ news.id }}">
@@ -47,8 +48,6 @@
                 </h3>
                 {% endfor %}
         </ul>
-        {% else %}
-            <p>Новоcтей нет</p>
         {% endif %}
     </section>
 <a href="/create_news/">
