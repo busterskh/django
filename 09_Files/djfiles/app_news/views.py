@@ -1,11 +1,12 @@
+from _csv import reader
+
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
-from app_news.forms import *
-from app_news.models import *
+from .forms import *
+from .models import *
 from django.views import generic, View
 from django.views.generic.edit import UpdateView
-from app_users.models import Profile
 from django.contrib.auth.mixins import PermissionRequiredMixin, UserPassesTestMixin
 
 
@@ -16,14 +17,10 @@ class NewsListView(generic.ListView):
 
     def get_queryset(self):
         model = super(NewsListView, self).get_queryset()
-        ordering = self.request.GET.get('orderby')
-
         ordering_by_teg = self.request.GET.get('tag')
         if ordering_by_teg:
             return News.objects.filter(tag=Tegs.objects.get(name=ordering_by_teg))
-        elif ordering:
-            return model.order_by(ordering)
-        return self.ordering
+        return News.objects.all()
 
     def get_context_data(self, **kwargs):
         data = super(NewsListView, self).get_context_data(**kwargs)
@@ -34,30 +31,24 @@ class NewsListView(generic.ListView):
 class NewsCreateView(PermissionRequiredMixin, generic.CreateView):
     model = News
     template_name = 'app_news/create_news.html'
-    fields = ('title', 'text', 'tag', )
     permission_required = ('app_news.add_news', )
+    fields = ('text', 'tag',)
 
     def handle_no_permission(self):
         return render(self.request, 'app_news/create_news_access_restricted.html', {})
 
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-
-        if form.is_valid():
-            News.objects.create(**form.cleaned_data, user=request.user)
-            try:
-                profile = Profile.objects.get(user=request.user)
-                profile.news_count += 1
-                profile.save()
-            except BaseException:
-                pass
-            return HttpResponseRedirect('/all_news/')
+    def form_valid(self, form):
+        new_object = form.save()
+        new_object.user = self.request.user
+        for item in self.request.FILES.getlist('gallery'):
+            Gallery.objects.create(img=item, news=new_object)
+        return super().form_valid(form)
 
 
 class NewsUpdateView(UserPassesTestMixin, UpdateView):
     model = News
     template_name = 'app_news/edit.html'
-    fields = ['title', 'text', ]
+    fields = ['text']
 
     def test_func(self):
         if self.request.user.is_superuser:
@@ -78,6 +69,7 @@ class NewsDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         data = super(NewsDetailView, self).get_context_data(**kwargs)
+        data['blog_pic'] = Gallery.objects.filter(news=self.get_object())
         data['comments_list'] = Comment.objects.filter(
             news_id=News.objects.get(id=self.kwargs.get(self.pk_url_kwarg, None)))
         if self.request.user.is_authenticated:
@@ -109,3 +101,21 @@ class MainPage(View):
 
     def get(self, request):
         return HttpResponseRedirect('all_news/')
+
+
+def csv_download(request):
+    if request.method == 'POST':
+        upload_file_form = CSVForm(request.POST, request.FILES)
+        if upload_file_form.is_valid():
+            file = upload_file_form.cleaned_data['file'].read()
+            text = file.decode('utf-8').split('\n')
+            user = request.user
+            csv_reader = reader(text, delimiter=',', quotechar='"')
+            for item in csv_reader:
+                News.objects.create(text=item[0], user=user, tag=None, )
+            return HttpResponse(content='Записи успешно добавлены', status=200)
+    else:
+        upload_file_form = CSVForm()
+
+        context = {'form': upload_file_form}
+        return render(request, 'app_news/csv_upload.html', context=context)

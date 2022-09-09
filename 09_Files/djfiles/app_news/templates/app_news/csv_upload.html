@@ -1,0 +1,16 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Создать новость</title>
+</head>
+<body>
+    <small><a href="/all_news/">На главную</a> </small>
+
+        <h2>Загрузить запись файлом</h2>
+        <form method="post" action="/create_news/" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+        <button type="submit">Создать</button>
+        </form>
+</body>
+</html>

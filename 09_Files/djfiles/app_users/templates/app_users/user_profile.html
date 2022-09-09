@@ -23,13 +23,18 @@
             </div>
         {% endif %}
     </div>
-    <h3> Профиль пользователя {{ request.user.username }}</h3>
+    <h3> Профиль пользователя {{ profile.user.username }}</h3>
     <div>
-        <p> Useraname: {{ request.user.username }} </p>
+        <img src="{{profile.avatar.url}}" alt="Avatar" height=100 width=100>
+        <p> Useraname: {{ profile.user.username }} </p>
+        <p> First name: {{ profile.user.first_name }} </p>
+        <p> Last name: {{ profile.user.last_name }} </p>
         <p> Phone: {{ profile.phone }} </p>
         <p> City: {{ profile.city }} </p>
         <p> Verifications: {{ profile.is_verification }} </p>
-        <p> Published news: {{ profile.news_count }} </p>
     </div>
+    {% if request.user == profile.user %}
+        <button><a href="edit_profile/">Редактировать</a></button>
+    {% endif %}
 </body>
 </html>

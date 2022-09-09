@@ -1,5 +1,6 @@
 from django.contrib import admin
 from app_news.models import News, Comment, Tegs
+from app_users.models import Profile
 
 
 class CommentInLine(admin.TabularInline):
@@ -7,21 +8,9 @@ class CommentInLine(admin.TabularInline):
 
 
 class NewsAdmin(admin.ModelAdmin):
-    list_display = ['title', 'create_date', 'is_active', 'id']
-    list_filter = ['is_active']
-    search_fields = ['title', 'text']
+    list_display = ['__str__', 'create_date', 'id', ]
+    search_fields = ['text', ]
     inlines = [CommentInLine]
-
-    actions = ['mark_as_active', 'mark_as_not_active']
-
-    def mark_as_active(self, request, queryset):
-        queryset.update(is_active=True)
-
-    def mark_as_not_active(self, request, queryset):
-        queryset.update(is_active=False)
-
-    mark_as_active.short_description = 'Mark as active'
-    mark_as_not_active.short_description = 'Mark as not active'
 
 
 class CommentAdmin(admin.ModelAdmin):
@@ -41,8 +30,12 @@ class TegsAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'is_verification', ]
+
 
 admin.site.register(News, NewsAdmin)
 admin.site.register(Comment, CommentAdmin)
 admin.site.register(Tegs, TegsAdmin)
+admin.site.register(Profile, ProfileAdmin)
 

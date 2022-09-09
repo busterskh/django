@@ -5,17 +5,15 @@ from django.urls import reverse
 
 
 class News(models.Model):
-    title = models.CharField(max_length=100, verbose_name='Заголовок')
     text = models.CharField(max_length=10000, verbose_name='Текст статьи')
     create_date = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     change_date = models.DateTimeField(auto_now=True, verbose_name='Дата последнего изменения')
-    is_active = models.BooleanField(verbose_name='Активность', default=False)
     user = models.ForeignKey(User, default=None, null=True, on_delete=models.CASCADE)
-    tag = models.ForeignKey('Tegs', on_delete=None, default=None, null=True)
+    tag = models.ForeignKey('Tegs', on_delete=None, default=None, null=True, blank=True)
 
     class Meta:
         db_table = 'News'
-        ordering = ['is_active', ]
+        ordering = ['create_date', ]
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
         permissions = (
@@ -24,10 +22,15 @@ class News(models.Model):
         )
 
     def __str__(self):
-        return self.title
+        return self.text
 
     def get_absolute_url(self):
         return reverse('news-detail', args=[str(self.id)])
+
+    def short_text(self):
+        if len(self.text) > 100:
+            return self.text[:100] + '...'
+        return self.text
 
 
 class Comment(models.Model):
@@ -52,4 +55,10 @@ class Tegs(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Gallery(models.Model):
+    img = models.ImageField(upload_to='img/')
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+
 

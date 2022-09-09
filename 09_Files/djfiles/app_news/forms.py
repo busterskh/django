@@ -1,5 +1,5 @@
 from django import forms
-from app_news.models import *
+from .models import *
 
 
 class CommentForm(forms.ModelForm):
@@ -16,3 +16,7 @@ class CommentFormAuthenticate(forms.ModelForm):
         model = Comment
 
         exclude = ('news_id', 'user_name', 'user')
+
+
+class CSVForm(forms.Form):
+    file = forms.FileField()

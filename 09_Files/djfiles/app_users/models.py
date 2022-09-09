@@ -7,5 +7,5 @@ class Profile(models.Model):
     phone = models.IntegerField(verbose_name='Телефон')
     city = models.CharField(max_length=50, verbose_name='Город')
     is_verification = models.BooleanField(default=False)
-    news_count = models.IntegerField(default=0)
     id = models.IntegerField(primary_key=True)
+    avatar = models.ImageField(upload_to='avatars/', default=None)

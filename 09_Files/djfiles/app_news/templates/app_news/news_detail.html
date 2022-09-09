@@ -21,14 +21,19 @@
     {% endif %}
 
     <small><a href="/all_news/">На главную</a> </small>
-    <h1>
-        {{ news_object.title }}
-    </h1>
+    <br>
 
+    {% if blog_pic %}
+        {% for item in blog_pic %}
+            <img src="{{item.img.url}}" width="400" height="400">
+        {% endfor%}
+    {% else %}
+        <p>Нет картинки</p>
+    {% endif %}
+    <br>
     <small>
-      Дата последнего изменения: {{ news_object.change_date }}
+      Дата последнего публикации: {{ news_object.create_date }}
     </small>
-
     <p>
         {{ news_object.text }}
     </p>
