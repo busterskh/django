@@ -13,11 +13,9 @@ class RegisterForm(UserCreationForm):
         fields = ('username', 'password1', 'password2', 'first_name', 'last_name', 'email')
 
 
-class UpdateProfileForm(forms.ModelForm):
+class UpdateForm(forms.Form):
     phone = forms.IntegerField()
     city = forms.CharField(max_length=50)
     avatar = forms.ImageField()
-
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name',)
+    first_name = forms.CharField(max_length=50)
+    last_name = forms.CharField(max_length=50)

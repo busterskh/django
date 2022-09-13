@@ -5,6 +5,8 @@
     <title>{{ request.user.username }}</title>
 </head>
 <body>
+    <small><a href="/all_news/">На главную</a> </small>
+
     <div>
         {% if request.user.is_authenticated %}
             <div align="right">Привет, {{ request.user.username }}!
