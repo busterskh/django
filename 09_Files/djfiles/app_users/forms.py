@@ -19,3 +19,13 @@ class UpdateForm(forms.Form):
     avatar = forms.ImageField()
     first_name = forms.CharField(max_length=50)
     last_name = forms.CharField(max_length=50)
+
+
+class UpdateFormView(forms.ModelForm):
+    phone = forms.IntegerField()
+    city = forms.CharField(max_length=50)
+    avatar = forms.ImageField()
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', ]

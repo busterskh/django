@@ -1,10 +1,10 @@
 from django.contrib.auth.views import LoginView, LogoutView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, UpdateForm
+from .forms import RegisterForm, UpdateForm, UpdateFormView
 from .models import Profile
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, CreateView
+from django.views.generic import DetailView, CreateView, UpdateView
 
 
 class UserLoginView(LoginView):
@@ -62,6 +62,26 @@ def update_form(request, pk):
 
     context = {'form': form}
     return render(request, 'app_users/edit.html', context=context)
+
+
+class UpdateProfile(UpdateView):
+    model = Profile
+    template_name = 'app_users/edit.html'
+    form_class = UpdateFormView
+
+    def form_valid(self, form):
+        form.save()
+        profile = self.get_object()
+        profile.phone = form.cleaned_data.get('phone')
+        profile.city = form.cleaned_data.get('city')
+        profile.avatar = form.cleaned_data.get('avatar')
+        profile.save()
+
+        user = profile.user
+        user.first_name = form.cleaned_data.get('first_name')
+        user.last_name = form.cleaned_data.get('last_name')
+        user.save()
+        return super().form_valid(form)
 
 
 class ProfileDetailView(DetailView):
