@@ -1,10 +1,10 @@
 from django.contrib.auth.views import LoginView, LogoutView
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from .forms import RegisterForm, UpdateForm, UpdateFormView
+from django.shortcuts import redirect
+from .forms import RegisterForm, UpdateFormView
 from .models import Profile
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, CreateView, UpdateView
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 
 
 class UserLoginView(LoginView):
@@ -38,50 +38,51 @@ class ProfileCreate(CreateView):
     success_url = reverse_lazy('login')
 
 
-def update_form(request, pk):
-    profile = Profile.objects.get(id=pk)
+# def update_form(request, pk):
+#     profile = Profile.objects.get(id=pk)
+#
+#     if request.user == profile.user:
+#         if request.method == 'POST':
+#             form = UpdateForm(request.POST, request.FILES)
+#             if form.is_valid():
+#                 profile.phone = form.cleaned_data.get('phone')
+#                 profile.city = form.cleaned_data.get('city')
+#                 profile.avatar = form.cleaned_data.get('avatar')
+#                 profile.save()
+#
+#                 user = profile.user
+#                 user.first_name = form.cleaned_data.get('first_name')
+#                 user.last_name = form.cleaned_data.get('last_name')
+#                 user.save()
+#                 return redirect(f'/user/{pk}/')
+#         else:
+#             form = UpdateForm()
+#
+#     else:
+#         HttpResponse(content='Доступ запрещен.', status=403)
+#
+#     form = UpdateForm()
+#     context = {'form': form}
+#     return render(request, 'app_users/edit.html', context=context)
 
-    if request.user == profile.user:
-        if request.method == 'POST':
-            form = UpdateForm(request.POST, request.FILES)
-            if form.is_valid():
-                profile.phone = form.cleaned_data.get('phone')
-                profile.city = form.cleaned_data.get('city')
-                profile.avatar = form.cleaned_data.get('avatar')
-                profile.save()
 
-                user = profile.user
-                user.first_name = form.cleaned_data.get('first_name')
-                user.last_name = form.cleaned_data.get('last_name')
-                user.save()
-                return redirect(f'/user/{pk}/')
-        else:
-            form = UpdateForm()
-    else:
-        HttpResponse(content='Доступ запрещен.', status=403)
-
-    context = {'form': form}
-    return render(request, 'app_users/edit.html', context=context)
-
-
-class UpdateProfile(UpdateView):
+class UpdateProfile(UserPassesTestMixin, UpdateView, LoginRequiredMixin):
     model = Profile
     template_name = 'app_users/edit.html'
     form_class = UpdateFormView
+    login_url = '/login/'
+    redirect_field_name = ''
 
     def form_valid(self, form):
-        form.save()
-        profile = self.get_object()
-        profile.phone = form.cleaned_data.get('phone')
-        profile.city = form.cleaned_data.get('city')
-        profile.avatar = form.cleaned_data.get('avatar')
-        profile.save()
+        profile = form.save()
+        profile.user.first_name = form.cleaned_data.get('first_name')
+        profile.user.last_name = form.cleaned_data.get('last_name')
+        profile.user.save()
+        return redirect(f'/user/{self.get_object().id}/')
 
-        user = profile.user
-        user.first_name = form.cleaned_data.get('first_name')
-        user.last_name = form.cleaned_data.get('last_name')
-        user.save()
-        return super().form_valid(form)
+    def test_func(self):
+        profile = self.get_object()
+        return profile.user == self.request.user
 
 
 class ProfileDetailView(DetailView):
